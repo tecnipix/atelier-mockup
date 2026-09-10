@@ -1,0 +1,17 @@
+{
+  "name": "Atelier Mockup pour Rendez-Vous de Photographes",
+  "short_name": "Atelier Mockup",
+  "description": "Mise en situation d'une oeuvre (photo, peinture, sculpture) dans un environnement d'exposition, avec passe-partout, cadre et perspective.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#E7E4DD",
+  "theme_color": "#211F1B",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

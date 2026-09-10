@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atelier Mockup pour Rendez-Vous de Photographes</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#211F1B">
+<link rel="icon" href="./favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Atelier Mockup">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#E7E4DD;
+    --panel:#211F1B;
+    --ink:#1B1917;
+    --ink-soft:#6F6A62;
+    --accent:#B08D57;
+    --accent-soft:#D9C39A;
+    --panel-ink:#EDE9DF;
+    --panel-ink-soft:#B7B1A2;
+    --panel-ink-faint:#8F887A;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    -webkit-font-smoothing:antialiased;
+  }
+  *:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  .app{display:flex; min-height:100vh;}
+
+  /* --- Rail (sidebar) --- */
+  .rail{
+    width:346px; flex-shrink:0;
+    background:var(--panel); color:var(--panel-ink);
+    padding:30px 26px 24px;
+    overflow-y:auto;
+    display:flex; flex-direction:column; gap:28px;
+  }
+  .rail__head h1{
+    font-family:'Fraunces',Georgia,serif; font-weight:600;
+    font-size:22px; margin:0 0 3px; color:#F6F2E8; letter-spacing:0.01em;
+  }
+  .rail__sub{margin:0; font-size:11.5px; color:var(--panel-ink-faint);}
+
+  .ctrl h2{
+    font-size:12.5px; font-weight:600; letter-spacing:0.02em;
+    color:var(--panel-ink-soft); margin:0 0 12px;
+  }
+
+  .dropzone{
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    border:1px dashed rgba(237,233,223,0.32); border-radius:2px;
+    padding:18px 12px; font-size:12.8px; color:#C9C3B5; cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .file-input-hidden{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+  }
+  .status-line{font-size:11.5px; color:var(--panel-ink-faint); min-height:14px; margin:8px 0 0;}
+  .status-line--error{color:#D9A98C;}
+  .dropzone:hover{border-color:var(--accent); color:var(--accent-soft);}
+  .dropzone--small{padding:12px;}
+
+  label.toggle{
+    display:flex; align-items:center; gap:8px;
+    font-size:13px; color:#D8D3C6; margin-bottom:10px; cursor:pointer;
+  }
+  label.toggle input{width:15px; height:15px; accent-color:var(--accent);}
+
+  .row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; margin-bottom:9px; font-size:12.5px; color:var(--panel-ink-soft);
+  }
+  .row input[type=range]{flex:1; margin-left:10px; accent-color:var(--accent);}
+  .row input[type=color]{
+    width:38px; height:26px; border:1px solid rgba(237,233,223,0.25);
+    border-radius:2px; background:none; padding:0; cursor:pointer;
+  }
+
+  .filmstrip{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px;}
+  .filmstrip::-webkit-scrollbar{height:5px;}
+  .filmstrip::-webkit-scrollbar-thumb{background:rgba(237,233,223,0.2); border-radius:3px;}
+  .thumb{
+    flex:0 0 auto; width:76px; background:none; border:1px solid transparent;
+    border-radius:2px; padding:3px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    font-family:inherit;
+  }
+  .thumb canvas{width:100%; height:52px; display:block; border-radius:1px; object-fit:cover;}
+  .thumb__cap{font-size:10px; color:var(--panel-ink-faint); line-height:1.2; text-align:center;}
+  .thumb.active{border-color:var(--accent);}
+  .thumb.active .thumb__cap{color:var(--accent-soft);}
+
+  .hidden{display:none;}
+  .pexels-block{margin-top:14px; padding-top:14px; border-top:1px solid rgba(237,233,223,0.12);}
+  .pexels-label{font-size:11.5px; font-weight:600; letter-spacing:0.02em; color:var(--panel-ink-soft); margin:0 0 10px;}
+  .pexels-link{display:inline-block; font-size:12px; color:var(--accent-soft); text-decoration:none; margin-bottom:10px;}
+  .pexels-link:hover{text-decoration:underline;}
+  .pexels-input{
+    width:100%; padding:9px 10px; border-radius:2px; border:1px solid rgba(237,233,223,0.25);
+    background:rgba(255,255,255,0.04); color:var(--panel-ink); font-size:12.5px; font-family:inherit; margin-bottom:8px;
+  }
+  .pexels-input::placeholder{color:var(--panel-ink-faint);}
+  .pexels-select{
+    padding:9px 8px; border-radius:2px; border:1px solid rgba(237,233,223,0.25);
+    background:rgba(255,255,255,0.04); color:var(--panel-ink); font-size:12px; font-family:inherit;
+  }
+  .pexels-searchrow{display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;}
+  .pexels-searchrow #pexelsQuery{flex:1 1 140px; margin-bottom:0;}
+  .pexels-searchrow .btn{width:auto; padding:9px 12px;}
+  .pexels-chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
+  .pexels-chip{
+    background:rgba(237,233,223,0.06); border:1px solid rgba(237,233,223,0.18); color:#C9C3B5;
+    font-size:11px; padding:5px 9px; border-radius:12px; cursor:pointer; font-family:inherit;
+  }
+  .pexels-chip:hover{border-color:var(--accent); color:var(--accent-soft);}
+  .pexels-status{font-size:11.5px; color:var(--panel-ink-faint); min-height:14px; margin:2px 0 8px;}
+  .pexels-status--error{color:#D9A98C;}
+  .pexels-results{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:6px;}
+  .pexels-item{border:1px solid transparent; border-radius:2px; padding:0; cursor:pointer; background:none; overflow:hidden; aspect-ratio:4/3;}
+  .pexels-item img{width:100%; height:100%; object-fit:cover; display:block;}
+  .pexels-item:hover{border-color:var(--accent);}
+
+  .segmented{
+    display:flex; border:1px solid rgba(237,233,223,0.22);
+    border-radius:3px; overflow:hidden; margin-bottom:10px;
+  }
+  .seg{
+    flex:1; padding:8px 8px; background:transparent; color:#C9C3B5;
+    border:none; font-size:12.3px; cursor:pointer; font-family:inherit;
+  }
+  .seg.active{background:var(--accent); color:#1B1917; font-weight:600;}
+  .hint{font-size:11.6px; color:var(--panel-ink-faint); line-height:1.45; margin:0 0 12px;}
+
+  .btn{
+    width:100%; padding:11px 14px; border-radius:2px; border:1px solid transparent;
+    font-size:13px; cursor:pointer; font-family:inherit;
+  }
+  .btn--primary{background:var(--accent); color:#1B1917; font-weight:600;}
+  .btn--primary:hover{background:var(--accent-soft);}
+  .btn--ghost{
+    background:transparent; border-color:rgba(237,233,223,0.28); color:var(--panel-ink);
+  }
+  .btn--ghost:hover{border-color:var(--accent); color:var(--accent-soft);}
+
+  .rail__foot{margin-top:auto; padding-top:16px; border-top:1px solid rgba(237,233,223,0.14);}
+  .foot-note{font-size:10.5px; color:var(--panel-ink-faint); line-height:1.45; margin:10px 0 0;}
+
+  /* --- Stage --- */
+  .stage{flex:1; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:44px;}
+  .canvas-wrap{
+    position:relative; width:min(1100px, 100%);
+    box-shadow:0 34px 70px -26px rgba(27,25,23,0.4);
+    background:#fff;
+  }
+  #mainCanvas{display:block; width:100%; height:auto; touch-action:none; cursor:default;}
+  .empty-state{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(231,228,221,0.5); backdrop-filter:blur(2px); pointer-events:none;
+  }
+  .empty-state p{
+    font-family:'Fraunces',Georgia,serif; font-size:15px; color:var(--ink-soft);
+    background:#fff; padding:10px 20px; border:1px solid rgba(27,25,23,0.1); border-radius:2px; margin:0;
+  }
+  .empty-state.hidden{display:none;}
+
+  @media (max-width:860px){
+    .app{flex-direction:column;}
+    .rail{width:100%; order:2; max-height:60vh;}
+    .stage{order:1; padding:18px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="rail">
+    <header class="rail__head">
+      <h1>Atelier Mockup</h1>
+      <p class="rail__sub">Rendez-Vous de Photographes</p>
+    </header>
+
+    <section class="ctrl">
+      <h2>Œuvre</h2>
+      <label class="dropzone" for="artworkInput">
+        <input type="file" id="artworkInput" accept="image/*" class="file-input-hidden">
+        <span id="artworkLabel">Choisir une photo, une peinture ou une photo de sculpture…</span>
+      </label>
+      <p class="status-line" id="artworkStatus"></p>
+    </section>
+
+    <section class="ctrl">
+      <h2>Passe-partout</h2>
+      <label class="toggle"><input type="checkbox" id="matEnabled" checked><span>Activer le passe-partout</span></label>
+      <div class="row"><label for="matColor">Couleur</label><input type="color" id="matColor" value="#F5F2EA"></div>
+      <div class="row"><label for="matWidth">Largeur</label><input type="range" id="matWidth" min="0" max="15" value="8"></div>
+    </section>
+
+    <section class="ctrl">
+      <h2>Cadre</h2>
+      <label class="toggle"><input type="checkbox" id="frameEnabled" checked><span>Activer le cadre</span></label>
+      <div class="row"><label for="frameColor">Couleur</label><input type="color" id="frameColor" value="#1B1917"></div>
+      <div class="row"><label for="frameWidth">Épaisseur</label><input type="range" id="frameWidth" min="0" max="10" value="4"></div>
+    </section>
+
+    <section class="ctrl">
+      <h2>Environnement</h2>
+      <div class="filmstrip" id="envStrip"></div>
+      <label class="dropzone dropzone--small" for="envInput">
+        <input type="file" id="envInput" accept="image/*" class="file-input-hidden">
+        <span>Téléverser un mur ou une salle…</span>
+      </label>
+      <p class="status-line" id="envUploadStatus"></p>
+
+      <div class="pexels-block">
+        <p class="pexels-label">Ou trouver un fond en ligne (libre de droits)</p>
+
+        <div class="pexels-chips">
+          <button class="pexels-chip" type="button" data-query="white gallery wall interior">Mur galerie blanc</button>
+          <button class="pexels-chip" type="button" data-query="old classic room interior architecture">Salle ancienne</button>
+          <button class="pexels-chip" type="button" data-query="industrial loft interior brick wall">Loft industriel</button>
+          <button class="pexels-chip" type="button" data-query="wooden wall studio interior">Atelier bois</button>
+          <button class="pexels-chip" type="button" data-query="urban wall exterior street">Mur urbain extérieur</button>
+        </div>
+        <div class="pexels-searchrow">
+          <input type="text" id="pexelsQuery" class="pexels-input" placeholder="Décris le lieu (en anglais de préférence)…">
+          <select id="pexelsOrientation" class="pexels-select">
+            <option value="">Toutes orientations</option>
+            <option value="landscape">Paysage</option>
+            <option value="portrait">Portrait</option>
+          </select>
+          <button class="btn btn--ghost" id="pexelsSearchBtn" type="button">Rechercher</button>
+        </div>
+        <p class="pexels-status" id="pexelsStatus"></p>
+        <div class="pexels-results" id="pexelsResults"></div>
+        <p class="foot-note">Recherche propulsée par <a href="https://www.pexels.com" target="_blank" rel="noopener" style="color:var(--accent-soft);">Pexels</a></p>
+      </div>
+    </section>
+
+    <section class="ctrl">
+      <h2>Positionnement</h2>
+      <div class="segmented">
+        <button class="seg active" data-mode="simple" type="button">Simple</button>
+        <button class="seg" data-mode="perspective" type="button">Perspective libre</button>
+      </div>
+      <p class="hint" id="modeHint">Déplacez, redimensionnez (coin) et inclinez légèrement (poignée du haut) le cadre.</p>
+      <button class="btn btn--ghost" id="resetBtn" type="button">Recentrer</button>
+    </section>
+
+    <div class="rail__foot">
+      <button class="btn btn--primary" id="downloadBtn" type="button">Télécharger l'image</button>
+      <p class="foot-note">Tout se passe dans votre navigateur — vos images ne sont jamais envoyées sur un serveur.</p>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <div class="canvas-wrap">
+      <canvas id="mainCanvas" width="2200" height="1512"></canvas>
+      <div class="empty-state" id="emptyState"><p>Importez une œuvre pour commencer</p></div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const canvas=document.getElementById('mainCanvas');
+  const ctx=canvas.getContext('2d');
+  const stripEl=document.getElementById('envStrip');
+  const emptyStateEl=document.getElementById('emptyState');
+
+  const state={
+    artworkImg:null,
+    mat:{enabled:true, color:'#F5F2EA', widthRatio:0.08},
+    frame:{enabled:true, color:'#1B1917', widthRatio:0.04},
+    env:{source:null, w:2200, h:1512, key:null},
+    mode:'simple',
+    simpleRect:null,
+    perspCorners:null,
+    framedCanvas:null,
+    drag:null
+  };
+
+  /* ---------- helpers ---------- */
+  function makeCanvas(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
+  function dist(a,b){ return Math.hypot(a.x-b.x,a.y-b.y); }
+  function fitDims(w,h,max){
+    if(Math.max(w,h)<=max) return {w:Math.round(w),h:Math.round(h)};
+    const s=max/Math.max(w,h);
+    return {w:Math.round(w*s), h:Math.round(h*s)};
+  }
+  function drawCover(ctx2,img,w,h){
+    const ir=img.naturalWidth/img.naturalHeight, tr=w/h;
+    let sw,sh,sx,sy;
+    if(ir>tr){ sh=img.naturalHeight; sw=sh*tr; sx=(img.naturalWidth-sw)/2; sy=0; }
+    else { sw=img.naturalWidth; sh=sw/tr; sx=0; sy=(img.naturalHeight-sh)/2; }
+    ctx2.drawImage(img,sx,sy,sw,sh,0,0,w,h);
+  }
+
+  /* ---------- procedural environments ---------- */
+  function addGrain(ctx2,w,h,amount,alpha){
+    for(let i=0;i<amount;i++){
+      const x=Math.random()*w, y=Math.random()*h, s=Math.random()*1.6+0.3;
+      ctx2.fillStyle = Math.random()<0.5 ? `rgba(0,0,0,${alpha})` : `rgba(255,255,255,${alpha})`;
+      ctx2.fillRect(x,y,s,s);
+    }
+  }
+  function addFloor(ctx2,w,h,light,dark,baseboard){
+    const floorH=h*0.16;
+    const grd=ctx2.createLinearGradient(0,h-floorH,0,h);
+    grd.addColorStop(0,light); grd.addColorStop(1,dark);
+    ctx2.fillStyle=grd; ctx2.fillRect(0,h-floorH,w,floorH);
+    ctx2.fillStyle=baseboard; ctx2.fillRect(0,h-floorH,w,Math.max(3,h*0.006));
+  }
+  function addVignette(ctx2,w,h,strength){
+    const vg=ctx2.createRadialGradient(w/2,h*0.4,h*0.2,w/2,h*0.5,h*0.95);
+    vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,`rgba(0,0,0,${strength})`);
+    ctx2.fillStyle=vg; ctx2.fillRect(0,0,w,h);
+  }
+
+  function envGalleryWhite(w,h){
+    const c=makeCanvas(w,h), ctx2=c.getContext('2d');
+    const grd=ctx2.createLinearGradient(0,0,0,h);
+    grd.addColorStop(0,'#F7F5F0'); grd.addColorStop(0.7,'#F1EEE7'); grd.addColorStop(1,'#E9E5DB');
+    ctx2.fillStyle=grd; ctx2.fillRect(0,0,w,h);
+    addVignette(ctx2,w,h,0.06);
+    addGrain(ctx2,w,h,900,0.02);
+    addFloor(ctx2,w,h,'#DAD5C9','#C7C0AF','rgba(0,0,0,0.08)');
+    return c;
+  }
+  function envGalleryGrey(w,h){
+    const c=makeCanvas(w,h), ctx2=c.getContext('2d');
+    const grd=ctx2.createLinearGradient(0,0,0,h);
+    grd.addColorStop(0,'#DEDCD6'); grd.addColorStop(0.7,'#D3D1CA'); grd.addColorStop(1,'#C6C4BC');
+    ctx2.fillStyle=grd; ctx2.fillRect(0,0,w,h);
+    addVignette(ctx2,w,h,0.09);
+    addGrain(ctx2,w,h,1000,0.025);
+    addFloor(ctx2,w,h,'#B9B4A8','#A6A093','rgba(0,0,0,0.12)');
+    return c;
+  }
+  function envConcrete(w,h){
+    const c=makeCanvas(w,h), ctx2=c.getContext('2d');
+    const grd=ctx2.createLinearGradient(0,0,w,h);
+    grd.addColorStop(0,'#B7B2A9'); grd.addColorStop(0.5,'#A9A49B'); grd.addColorStop(1,'#9C978E');
+    ctx2.fillStyle=grd; ctx2.fillRect(0,0,w,h);
+    for(let i=0;i<20;i++){
+      const tone=Math.random()<0.5?0:255;
+      ctx2.strokeStyle=`rgba(${tone},${tone},${tone},${(Math.random()*0.05+0.02).toFixed(3)})`;
+      ctx2.lineWidth=Math.random()*3+0.5;
+      ctx2.beginPath();
+      const x=Math.random()*w;
+      ctx2.moveTo(x+(Math.random()-0.5)*40,0);
+      ctx2.lineTo(x+(Math.random()-0.5)*80,h*0.86);
+      ctx2.stroke();
+    }
+    addGrain(ctx2,w,h,1400,0.03);
+    addFloor(ctx2,w,h,'#8D897F','#77736A','rgba(0,0,0,0.18)');
+    return c;
+  }
+  function envBrick(w,h){
+    const c=makeCanvas(w,h), ctx2=c.getContext('2d');
+    ctx2.fillStyle='#EDE8DE'; ctx2.fillRect(0,0,w,h);
+    const brickH=h*0.045, brickW=brickH*2.4;
+    let rowIdx=0;
+    for(let y=0;y<h*0.86;y+=brickH){
+      const offset=(rowIdx%2===0)?0:brickW/2;
+      for(let x=-brickW;x<w+brickW;x+=brickW){
+        const tint=Math.random()*10-5;
+        ctx2.fillStyle=`rgb(${235+tint},${230+tint},${221+tint})`;
+        ctx2.fillRect(x+offset,y,brickW-Math.max(2,brickH*0.12),brickH-Math.max(2,brickH*0.12));
+      }
+      rowIdx++;
+    }
+    addVignette(ctx2,w,h,0.1);
+    addFloor(ctx2,w,h,'#C9C2B2','#B5AD9B','rgba(0,0,0,0.12)');
+    return c;
+  }
+  function envWood(w,h){
+    const c=makeCanvas(w,h), ctx2=c.getContext('2d');
+    const grd=ctx2.createLinearGradient(0,0,0,h);
+    grd.addColorStop(0,'#D9C6A6'); grd.addColorStop(1,'#C7B18D');
+    ctx2.fillStyle=grd; ctx2.fillRect(0,0,w,h);
+    const planks=14, pw=w/planks;
+    for(let i=0;i<=planks;i++){
+      ctx2.strokeStyle='rgba(90,65,35,0.15)'; ctx2.lineWidth=1.5;
+      ctx2.beginPath(); ctx2.moveTo(i*pw,0); ctx2.lineTo(i*pw,h*0.86); ctx2.stroke();
+    }
+    addGrain(ctx2,w,h*0.86,1800,0.02);
+    addFloor(ctx2,w,h,'#8C6A45','#6E5136','rgba(0,0,0,0.18)');
+    return c;
+  }
+
+  const BUILTIN_ENVS=[
+    {key:'gallery-white', label:'Mur galerie blanc', gen:envGalleryWhite},
+    {key:'gallery-grey', label:'Mur galerie gris', gen:envGalleryGrey},
+    {key:'concrete', label:'Béton brut', gen:envConcrete},
+    {key:'brick', label:'Brique peinte', gen:envBrick},
+    {key:'wood', label:'Bois clair', gen:envWood}
+  ];
+  const envCache={};
+
+  function buildEnvStrip(){
+    BUILTIN_ENVS.forEach(e=>{
+      const btn=document.createElement('button');
+      btn.className='thumb'; btn.type='button'; btn.dataset.key=e.key;
+      const thumb=e.gen(160,110);
+      btn.appendChild(thumb);
+      const cap=document.createElement('span'); cap.className='thumb__cap'; cap.textContent=e.label;
+      btn.appendChild(cap);
+      btn.addEventListener('click', ()=>selectBuiltinEnv(e));
+      stripEl.appendChild(btn);
+    });
+  }
+  function selectBuiltinEnv(e){
+    if(!envCache[e.key]) envCache[e.key]=e.gen(2200,1512);
+    state.env={source:envCache[e.key], w:2200, h:1512, key:e.key, tainted:false};
+    updateActiveThumb(e.key);
+    setupCanvasSize();
+  }
+  function updateActiveThumb(key){
+    document.querySelectorAll('.thumb').forEach(b=>b.classList.toggle('active', b.dataset.key===key));
+  }
+
+  /* ---------- framed artwork builder ---------- */
+  function buildFramedCanvas(){
+    const img=state.artworkImg;
+    if(!img) return null;
+    const iw=img.naturalWidth, ih=img.naturalHeight;
+    const shortSide=Math.min(iw,ih);
+    const matPx=state.mat.enabled ? Math.round(state.mat.widthRatio*shortSide) : 0;
+    const afterMatW=iw+2*matPx, afterMatH=ih+2*matPx;
+    const framePx=state.frame.enabled ? Math.round(state.frame.widthRatio*Math.min(afterMatW,afterMatH)) : 0;
+    const totalW=afterMatW+2*framePx, totalH=afterMatH+2*framePx;
+    const c=makeCanvas(totalW,totalH);
+    const ctx2=c.getContext('2d');
+
+    if(framePx>0){
+      ctx2.fillStyle=state.frame.color;
+      ctx2.fillRect(0,0,totalW,totalH);
+      let lw=Math.max(1,framePx*0.06);
+      ctx2.strokeStyle='rgba(255,255,255,0.15)'; ctx2.lineWidth=lw;
+      ctx2.strokeRect(lw/2,lw/2,totalW-lw,totalH-lw);
+      lw=Math.max(1,framePx*0.08);
+      ctx2.strokeStyle='rgba(0,0,0,0.35)'; ctx2.lineWidth=lw;
+      ctx2.strokeRect(framePx-lw/2,framePx-lw/2,totalW-2*framePx+lw,totalH-2*framePx+lw);
+    }
+    ctx2.fillStyle=state.mat.enabled ? state.mat.color : '#ffffff';
+    ctx2.fillRect(framePx,framePx,afterMatW,afterMatH);
+    if(matPx>0){
+      ctx2.strokeStyle='rgba(0,0,0,0.18)';
+      ctx2.lineWidth=Math.max(1,shortSide*0.002);
+      ctx2.strokeRect(framePx+matPx,framePx+matPx,iw,ih);
+    }
+    ctx2.drawImage(img, framePx+matPx, framePx+matPx, iw, ih);
+    return c;
+  }
+
+  function rebuildFramed(isNew){
+    state.framedCanvas=buildFramedCanvas();
+    if(!state.framedCanvas) return;
+    if(isNew || !state.simpleRect){
+      resetPosition();
+    } else {
+      const aspect=state.framedCanvas.height/state.framedCanvas.width;
+      state.simpleRect.h=state.simpleRect.w*aspect;
+    }
+    render(true);
+  }
+
+  /* ---------- geometry ---------- */
+  function rectToCorners(r){
+    const hw=r.w/2, hh=r.h/2;
+    const pts=[{x:-hw,y:-hh},{x:hw,y:-hh},{x:hw,y:hh},{x:-hw,y:hh}];
+    return pts.map(p=>{
+      const rx=p.x*Math.cos(r.angle)-p.y*Math.sin(r.angle);
+      const ry=p.x*Math.sin(r.angle)+p.y*Math.cos(r.angle);
+      return {x:r.cx+rx, y:r.cy+ry};
+    });
+  }
+  function cornersToApproxRect(c){
+    const cx=(c[0].x+c[1].x+c[2].x+c[3].x)/4;
+    const cy=(c[0].y+c[1].y+c[2].y+c[3].y)/4;
+    const w=(dist(c[0],c[1])+dist(c[3],c[2]))/2;
+    const h=(dist(c[0],c[3])+dist(c[1],c[2]))/2;
+    return {cx,cy,w,h,angle:0};
+  }
+  function resetPosition(){
+    if(!state.framedCanvas) return;
+    const W=canvas.width, H=canvas.height;
+    const aspect=state.framedCanvas.height/state.framedCanvas.width;
+    const w=W*0.42, h=w*aspect;
+    state.simpleRect={cx:W/2, cy:H*0.46, w, h, angle:0};
+    state.perspCorners=rectToCorners(state.simpleRect);
+  }
+  function pointInRotatedRect(p,r){
+    const dx=p.x-r.cx, dy=p.y-r.cy, ang=-r.angle;
+    const lx=dx*Math.cos(ang)-dy*Math.sin(ang);
+    const ly=dx*Math.sin(ang)+dy*Math.cos(ang);
+    return Math.abs(lx)<=r.w/2 && Math.abs(ly)<=r.h/2;
+  }
+  function pointInPolygon(p,poly){
+    let inside=false;
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+      const xi=poly[i].x, yi=poly[i].y, xj=poly[j].x, yj=poly[j].y;
+      const hit=((yi>p.y)!==(yj>p.y)) && (p.x < (xj-xi)*(p.y-yi)/(yj-yi)+xi);
+      if(hit) inside=!inside;
+    }
+    return inside;
+  }
+  function rotateHandlePos(r){
+    const localY=-r.h/2-Math.max(30,r.h*0.13);
+    const rx=-localY*Math.sin(r.angle), ry=localY*Math.cos(r.angle);
+    return {x:r.cx+rx, y:r.cy+ry};
+  }
+  function handleRadius(){ return Math.max(13, canvas.width*0.014); }
+
+  /* ---------- perspective warp (triangle affine mapping) ---------- */
+  function dilateTriangle(pts, amount){
+    const cx=(pts[0].x+pts[1].x+pts[2].x)/3, cy=(pts[0].y+pts[1].y+pts[2].y)/3;
+    return pts.map(p=>{
+      const dx=p.x-cx, dy=p.y-cy, len=Math.hypot(dx,dy)||1;
+      return {x:p.x+dx/len*amount, y:p.y+dy/len*amount};
+    });
+  }
+  function drawTriangleImage(ctx2,img,s,d){
+    ctx2.save();
+    const cd=dilateTriangle(d, 0.75);
+    ctx2.beginPath();
+    ctx2.moveTo(cd[0].x,cd[0].y); ctx2.lineTo(cd[1].x,cd[1].y); ctx2.lineTo(cd[2].x,cd[2].y);
+    ctx2.closePath(); ctx2.clip();
+    const denom=s[0].x*(s[1].y-s[2].y)+s[1].x*(s[2].y-s[0].y)+s[2].x*(s[0].y-s[1].y);
+    if(Math.abs(denom)<1e-6){ ctx2.restore(); return; }
+    const a=(d[0].x*(s[1].y-s[2].y)+d[1].x*(s[2].y-s[0].y)+d[2].x*(s[0].y-s[1].y))/denom;
+    const b=(d[0].y*(s[1].y-s[2].y)+d[1].y*(s[2].y-s[0].y)+d[2].y*(s[0].y-s[1].y))/denom;
+    const c=(d[0].x*(s[2].x-s[1].x)+d[1].x*(s[0].x-s[2].x)+d[2].x*(s[1].x-s[0].x))/denom;
+    const dd=(d[0].y*(s[2].x-s[1].x)+d[1].y*(s[0].x-s[2].x)+d[2].y*(s[1].x-s[0].x))/denom;
+    const e=(d[0].x*(s[1].x*s[2].y-s[2].x*s[1].y)+d[1].x*(s[2].x*s[0].y-s[0].x*s[2].y)+d[2].x*(s[0].x*s[1].y-s[1].x*s[0].y))/denom;
+    const f=(d[0].y*(s[1].x*s[2].y-s[2].x*s[1].y)+d[1].y*(s[2].x*s[0].y-s[0].x*s[2].y)+d[2].y*(s[0].x*s[1].y-s[1].x*s[0].y))/denom;
+    ctx2.transform(a,b,c,dd,e,f);
+    ctx2.drawImage(img,0,0);
+    ctx2.restore();
+  }
+  function lerp(p0,p1,t){ return {x:p0.x+(p1.x-p0.x)*t, y:p0.y+(p1.y-p0.y)*t}; }
+  function bilerp(corners,u,v){
+    const top=lerp(corners[0],corners[1],u), bottom=lerp(corners[3],corners[2],u);
+    return lerp(top,bottom,v);
+  }
+  function warpImageToQuad(ctx2,img,dstCorners,grid){
+    const w=img.width, h=img.height;
+    for(let i=0;i<grid;i++){
+      for(let j=0;j<grid;j++){
+        const u0=i/grid,u1=(i+1)/grid,v0=j/grid,v1=(j+1)/grid;
+        const s00={x:u0*w,y:v0*h}, s10={x:u1*w,y:v0*h}, s11={x:u1*w,y:v1*h}, s01={x:u0*w,y:v1*h};
+        const d00=bilerp(dstCorners,u0,v0), d10=bilerp(dstCorners,u1,v0);
+        const d11=bilerp(dstCorners,u1,v1), d01=bilerp(dstCorners,u0,v1);
+        drawTriangleImage(ctx2,img,[s00,s10,s11],[d00,d10,d11]);
+        drawTriangleImage(ctx2,img,[s00,s11,s01],[d00,d11,d01]);
+      }
+    }
+  }
+
+  /* ---------- render ---------- */
+  function drawSimple(){
+    const r=state.simpleRect;
+    ctx.save();
+    ctx.translate(r.cx,r.cy);
+    ctx.rotate(r.angle);
+    ctx.save();
+    ctx.filter='blur('+Math.max(4,r.w*0.018)+'px)';
+    ctx.fillStyle='rgba(0,0,0,0.32)';
+    const off=Math.max(3,r.w*0.012);
+    ctx.fillRect(-r.w/2+off, -r.h/2+off*1.5, r.w, r.h);
+    ctx.restore();
+    ctx.drawImage(state.framedCanvas, -r.w/2, -r.h/2, r.w, r.h);
+    ctx.restore();
+  }
+  function drawPerspective(grid){
+    const c=state.perspCorners;
+    const avgEdge=(dist(c[0],c[1])+dist(c[1],c[2])+dist(c[2],c[3])+dist(c[3],c[0]))/4;
+    const off=avgEdge*0.015+4;
+    ctx.save();
+    ctx.filter='blur('+Math.max(4,avgEdge*0.02)+'px)';
+    ctx.fillStyle='rgba(0,0,0,0.32)';
+    ctx.beginPath();
+    ctx.moveTo(c[0].x+off,c[0].y+off*1.5);
+    ctx.lineTo(c[1].x+off,c[1].y+off*1.5);
+    ctx.lineTo(c[2].x+off,c[2].y+off*1.5);
+    ctx.lineTo(c[3].x+off,c[3].y+off*1.5);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+    warpImageToQuad(ctx, state.framedCanvas, c, grid);
+  }
+  function drawHandleDot(p,small){
+    const r=handleRadius()*(small?0.55:0.6);
+    ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2);
+    ctx.fillStyle='#FFFFFF'; ctx.fill();
+    ctx.lineWidth=Math.max(1.5,canvas.width*0.0018);
+    ctx.strokeStyle='#B08D57'; ctx.stroke();
+  }
+  function drawHandles(){
+    ctx.save();
+    ctx.lineWidth=Math.max(1.5,canvas.width*0.0015);
+    ctx.strokeStyle='rgba(176,141,87,0.9)';
+    if(state.mode==='simple'){
+      const r=state.simpleRect, corners=rectToCorners(r);
+      ctx.beginPath(); ctx.moveTo(corners[0].x,corners[0].y);
+      for(let i=1;i<4;i++) ctx.lineTo(corners[i].x,corners[i].y);
+      ctx.closePath(); ctx.stroke();
+      corners.forEach(c=>drawHandleDot(c));
+      const rh=rotateHandlePos(r);
+      const topMid={x:(corners[0].x+corners[1].x)/2, y:(corners[0].y+corners[1].y)/2};
+      ctx.beginPath(); ctx.moveTo(topMid.x,topMid.y); ctx.lineTo(rh.x,rh.y);
+      ctx.strokeStyle='rgba(176,141,87,0.7)'; ctx.lineWidth=1.5; ctx.stroke();
+      drawHandleDot(rh,true);
+    } else {
+      const c=state.perspCorners;
+      ctx.beginPath(); ctx.moveTo(c[0].x,c[0].y);
+      for(let i=1;i<4;i++) ctx.lineTo(c[i].x,c[i].y);
+      ctx.closePath(); ctx.stroke();
+      c.forEach(pt=>drawHandleDot(pt));
+    }
+    ctx.restore();
+  }
+  function render(showHandles){
+    const W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    if(state.env.source) ctx.drawImage(state.env.source,0,0,W,H);
+    if(state.framedCanvas){
+      if(state.mode==='simple') drawSimple();
+      else drawPerspective(state.drag ? 9 : 20);
+      if(showHandles) drawHandles();
+    }
+  }
+  let renderScheduled=false;
+  function requestRender(){
+    if(renderScheduled) return;
+    renderScheduled=true;
+    requestAnimationFrame(()=>{ renderScheduled=false; render(true); });
+  }
+
+  function setupCanvasSize(){
+    const {w,h}=fitDims(state.env.w, state.env.h, 2800);
+    canvas.width=w; canvas.height=h;
+    if(state.framedCanvas) resetPosition();
+    render(true);
+  }
+
+  /* ---------- pointer interaction ---------- */
+  function toCanvasCoords(e){
+    const rect=canvas.getBoundingClientRect();
+    const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
+    return {x:(e.clientX-rect.left)*sx, y:(e.clientY-rect.top)*sy};
+  }
+  function onPointerDown(e){
+    if(!state.framedCanvas) return;
+    const p=toCanvasCoords(e), R=handleRadius();
+    if(state.mode==='simple'){
+      const r=state.simpleRect;
+      const rh=rotateHandlePos(r);
+      if(dist(p,rh)<R){
+        state.drag={type:'rotate', center:{x:r.cx,y:r.cy}, startAngle:r.angle, startPointerAngle:Math.atan2(p.y-r.cy,p.x-r.cx)};
+        canvas.setPointerCapture(e.pointerId); return;
+      }
+      const corners=rectToCorners(r);
+      for(let i=0;i<4;i++){
+        if(dist(p,corners[i])<R){
+          state.drag={type:'resize', startW:r.w, startH:r.h, startDist:Math.hypot(r.w/2,r.h/2)};
+          canvas.setPointerCapture(e.pointerId); return;
+        }
+      }
+      if(pointInRotatedRect(p,r)){
+        state.drag={type:'move', dx:p.x-r.cx, dy:p.y-r.cy};
+        canvas.setPointerCapture(e.pointerId); return;
+      }
+    } else {
+      const c=state.perspCorners;
+      for(let i=0;i<4;i++){
+        if(dist(p,c[i])<R){
+          state.drag={type:'corner', index:i};
+          canvas.setPointerCapture(e.pointerId); return;
+        }
+      }
+      if(pointInPolygon(p,c)){
+        state.drag={type:'moveAll', last:p};
+        canvas.setPointerCapture(e.pointerId); return;
+      }
+    }
+  }
+  function onPointerMove(e){
+    if(!state.drag) return;
+    const p=toCanvasCoords(e);
+    if(state.mode==='simple'){
+      const r=state.simpleRect;
+      if(state.drag.type==='move'){ r.cx=p.x-state.drag.dx; r.cy=p.y-state.drag.dy; }
+      else if(state.drag.type==='resize'){
+        const ang=-r.angle, dx=p.x-r.cx, dy=p.y-r.cy;
+        const lx=dx*Math.cos(ang)-dy*Math.sin(ang), ly=dx*Math.sin(ang)+dy*Math.cos(ang);
+        const scale=Math.max(0.05, Math.hypot(lx,ly)/state.drag.startDist);
+        r.w=state.drag.startW*scale; r.h=state.drag.startH*scale;
+      } else if(state.drag.type==='rotate'){
+        const ang=Math.atan2(p.y-state.drag.center.y,p.x-state.drag.center.x);
+        r.angle=state.drag.startAngle+(ang-state.drag.startPointerAngle);
+      }
+    } else {
+      if(state.drag.type==='corner'){ state.perspCorners[state.drag.index]={x:p.x,y:p.y}; }
+      else if(state.drag.type==='moveAll'){
+        const dx=p.x-state.drag.last.x, dy=p.y-state.drag.last.y;
+        state.perspCorners.forEach(c=>{ c.x+=dx; c.y+=dy; });
+        state.drag.last=p;
+      }
+    }
+    requestRender();
+  }
+  function onPointerUp(){ state.drag=null; render(true); }
+
+  canvas.addEventListener('pointerdown', onPointerDown);
+  canvas.addEventListener('pointermove', onPointerMove);
+  canvas.addEventListener('pointerup', onPointerUp);
+  canvas.addEventListener('pointercancel', onPointerUp);
+
+  /* ---------- controls wiring ---------- */
+  function setStatus(elId, text, isError){
+    const el=document.getElementById(elId);
+    if(!el) return;
+    el.textContent=text||'';
+    el.className='status-line'+(isError?' status-line--error':'');
+  }
+
+  function bitmapToCanvas(bitmap){
+    const c=makeCanvas(bitmap.width, bitmap.height);
+    c.getContext('2d').drawImage(bitmap, 0, 0);
+    c.naturalWidth=c.width; c.naturalHeight=c.height;
+    if(bitmap.close) bitmap.close();
+    return c;
+  }
+
+  function loadViaFileReader(file, finish, fail){
+    const reader=new FileReader();
+    reader.onerror=()=>fail(reader.error);
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>finish(img);
+      img.onerror=ev=>fail(ev);
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function loadImageFile(file, statusElId){
+    return new Promise((resolve, reject)=>{
+      setStatus(statusElId, 'Chargement…');
+      const finish=source=>{ setStatus(statusElId, ''); resolve(source); };
+      const fail=err=>{
+        console.error('Image loading failed for', file && file.name, err);
+        setStatus(statusElId, "Ce fichier n'a pas pu être ouvert. Essaie un JPEG ou PNG.", true);
+        reject(err);
+      };
+      if(window.createImageBitmap){
+        createImageBitmap(file, {imageOrientation:'from-image'}).then(bitmap=>{
+          finish(bitmapToCanvas(bitmap));
+        }).catch(err=>{
+          console.error('createImageBitmap failed, falling back to FileReader', err);
+          loadViaFileReader(file, finish, fail);
+        });
+      } else {
+        loadViaFileReader(file, finish, fail);
+      }
+    });
+  }
+
+  document.getElementById('artworkInput').addEventListener('change', ev=>{
+    const file=ev.target.files[0]; if(!file) return;
+    loadImageFile(file, 'artworkStatus').then(source=>{
+      state.artworkImg=source;
+      document.getElementById('artworkLabel').textContent=file.name;
+      emptyStateEl.classList.add('hidden');
+      rebuildFramed(true);
+    }).catch(()=>{});
+  });
+
+  function addImageEnvThumb(img, key, label, tainted){
+    state.env={source:img, w:img.naturalWidth, h:img.naturalHeight, key, tainted:!!tainted};
+    const btn=document.createElement('button');
+    btn.className='thumb'; btn.type='button'; btn.dataset.key=key; btn.dataset.tainted=tainted?'1':'0';
+    const tc=makeCanvas(160,110);
+    drawCover(tc.getContext('2d'), img, 160, 110);
+    btn.appendChild(tc);
+    const cap=document.createElement('span'); cap.className='thumb__cap'; cap.textContent=label;
+    btn.appendChild(cap);
+    btn.addEventListener('click', ()=>{
+      state.env={source:img, w:img.naturalWidth, h:img.naturalHeight, key, tainted:btn.dataset.tainted==='1'};
+      updateActiveThumb(key); setupCanvasSize();
+    });
+    stripEl.appendChild(btn);
+    updateActiveThumb(key);
+    setupCanvasSize();
+  }
+
+  document.getElementById('envInput').addEventListener('change', ev=>{
+    const file=ev.target.files[0]; if(!file) return;
+    loadImageFile(file, 'envUploadStatus').then(source=>{
+      addImageEnvThumb(source, 'custom-'+Date.now(), 'Votre photo');
+    }).catch(()=>{});
+  });
+
+  /* ---------- Pexels online search (via server-side function, key hidden) ---------- */
+  function setPexelsStatus(text, isError){
+    const el=document.getElementById('pexelsStatus');
+    el.textContent=text||'';
+    el.className='pexels-status'+(isError?' pexels-status--error':'');
+  }
+
+  function selectPexelsPhoto(photo){
+    setPexelsStatus('Chargement de la photo…');
+    const bust=u=>u+(u.includes('?')?'&':'?')+'_cb='+Date.now();
+    const label='Pexels : '+(photo.photographer||'photo');
+    const key='pexels-'+photo.id+'-'+Date.now();
+
+    function loadPlain(){
+      const img2=new Image();
+      img2.onload=()=>{
+        setPexelsStatus("Photo chargée, mais cette source ne permet pas le téléchargement du montage final — pour exporter, téléverse plutôt ta propre photo du lieu.", true);
+        addImageEnvThumb(img2, key, label, true);
+      };
+      img2.onerror=()=>setPexelsStatus("Cette image n'a pas pu être chargée, essaie-en une autre.", true);
+      img2.src=bust(photo.src.large2x);
+    }
+
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{ setPexelsStatus(''); addImageEnvThumb(img, key, label, false); };
+    img.onerror=loadPlain;
+    img.src=bust(photo.src.large2x);
+  }
+
+  async function pexelsSearch(query){
+    if(!query) return;
+    const resultsEl=document.getElementById('pexelsResults');
+    resultsEl.innerHTML='';
+    setPexelsStatus('Recherche…');
+    const orientation=document.getElementById('pexelsOrientation').value;
+    let url='/.netlify/functions/pexels-search?per_page=12&query='+encodeURIComponent(query);
+    if(orientation) url+='&orientation='+orientation;
+    try{
+      const res=await fetch(url);
+      if(res.status===500){ setPexelsStatus("La recherche en ligne n'est pas encore configurée sur ce site.", true); return; }
+      if(res.status===429){ setPexelsStatus('Limite de requêtes atteinte pour le moment, réessaie plus tard.', true); return; }
+      if(!res.ok){ setPexelsStatus('La recherche a échoué (réponse '+res.status+').', true); return; }
+      const data=await res.json();
+      if(!data.photos || data.photos.length===0){ setPexelsStatus('Aucun résultat pour cette recherche.'); return; }
+      setPexelsStatus('');
+      data.photos.forEach(photo=>{
+        const item=document.createElement('button');
+        item.className='pexels-item'; item.type='button';
+        item.title='Photo : '+(photo.photographer||'inconnu')+' — Pexels';
+        const img=document.createElement('img'); img.src=photo.src.medium; img.alt='';
+        item.appendChild(img);
+        item.addEventListener('click', ()=>selectPexelsPhoto(photo));
+        resultsEl.appendChild(item);
+      });
+    }catch(err){
+      setPexelsStatus('Impossible de contacter le service de recherche pour le moment.', true);
+    }
+  }
+
+  document.getElementById('pexelsSearchBtn').addEventListener('click', ()=>{
+    const q=document.getElementById('pexelsQuery').value.trim();
+    if(q) pexelsSearch(q);
+  });
+  document.getElementById('pexelsQuery').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('pexelsSearchBtn').click(); }
+  });
+  document.querySelectorAll('.pexels-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      document.getElementById('pexelsQuery').value=chip.dataset.query;
+      pexelsSearch(chip.dataset.query);
+    });
+  });
+
+  document.getElementById('matEnabled').addEventListener('change', e=>{ state.mat.enabled=e.target.checked; rebuildFramed(false); });
+  document.getElementById('matColor').addEventListener('input', e=>{ state.mat.color=e.target.value; rebuildFramed(false); });
+  document.getElementById('matWidth').addEventListener('input', e=>{ state.mat.widthRatio=e.target.value/100; rebuildFramed(false); });
+  document.getElementById('frameEnabled').addEventListener('change', e=>{ state.frame.enabled=e.target.checked; rebuildFramed(false); });
+  document.getElementById('frameColor').addEventListener('input', e=>{ state.frame.color=e.target.value; rebuildFramed(false); });
+  document.getElementById('frameWidth').addEventListener('input', e=>{ state.frame.widthRatio=e.target.value/100; rebuildFramed(false); });
+
+  document.querySelectorAll('.seg').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const m=btn.dataset.mode;
+      if(m===state.mode || !state.framedCanvas){
+        if(!state.framedCanvas) return;
+      }
+      if(m!==state.mode){
+        if(m==='perspective'){ state.perspCorners=rectToCorners(state.simpleRect); }
+        else { state.simpleRect=cornersToApproxRect(state.perspCorners); }
+        state.mode=m;
+      }
+      document.querySelectorAll('.seg').forEach(b=>b.classList.toggle('active', b===btn));
+      document.getElementById('modeHint').textContent = m==='simple'
+        ? "Déplacez, redimensionnez (coin) et inclinez légèrement (poignée du haut) le cadre."
+        : "Glissez chacun des 4 coins pour épouser la perspective du mur.";
+      render(true);
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', ()=>{ resetPosition(); render(true); });
+
+  document.getElementById('downloadBtn').addEventListener('click', ()=>{
+    if(!state.framedCanvas){ return; }
+    if(state.env.tainted){
+      setPexelsStatus("Impossible de télécharger avec ce fond (source qui bloque l'export) — choisis un autre fond en ligne, ou téléverse ta propre photo du lieu.", true);
+      return;
+    }
+    render(false);
+    canvas.toBlob(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download='mockup-'+Date.now()+'.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    }, 'image/png');
+    render(true);
+  });
+
+  /* ---------- init ---------- */
+  buildEnvStrip();
+  selectBuiltinEnv(BUILTIN_ENVS[0]);
+})();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
