@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Atelier Mockup pour Rendez-Vous de Photographes</title>
+<title>L'atelier Mockup pour Tecnipix</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#211F1B">
 <link rel="icon" href="./favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Atelier Mockup">
+<meta name="apple-mobile-web-app-title" content="L'atelier Mockup">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#E7E4DD;
@@ -25,6 +25,7 @@
     --panel-ink:#EDE9DF;
     --panel-ink-soft:#B7B1A2;
     --panel-ink-faint:#8F887A;
+    --radius:14px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;height:100%;}
@@ -40,29 +41,55 @@
 
   /* --- Rail (sidebar) --- */
   .rail{
+    position:relative;
     width:346px; flex-shrink:0;
     background:var(--panel); color:var(--panel-ink);
-    padding:30px 26px 24px;
+    padding:32px 26px 24px;
     overflow-y:auto;
-    display:flex; flex-direction:column; gap:28px;
+    display:flex; flex-direction:column; gap:18px;
   }
+  .rail::before{
+    content:"";
+    position:absolute; inset:0; z-index:-1;
+    opacity:0.9; mix-blend-mode:overlay; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+  }
+  .rail__head{padding-bottom:18px; margin-bottom:2px; border-bottom:1px solid rgba(217,195,154,0.22);}
+  .rail__brand{display:flex; align-items:center; gap:14px;}
+  .brand-mark{width:36px; height:36px; flex-shrink:0;}
   .rail__head h1{
-    font-family:'Fraunces',Georgia,serif; font-weight:600;
-    font-size:22px; margin:0 0 3px; color:#F6F2E8; letter-spacing:0.01em;
+    font-family:'Manrope',system-ui,sans-serif; font-weight:800;
+    font-size:27px; line-height:1.1; margin:0 0 6px; color:#F6F2E8; letter-spacing:-0.01em;
   }
-  .rail__sub{margin:0; font-size:11.5px; color:var(--panel-ink-faint);}
+  .rail__sub{margin:0; font-size:12px; color:var(--panel-ink-faint);}
 
-  .ctrl h2{
-    font-size:12.5px; font-weight:600; letter-spacing:0.02em;
-    color:var(--panel-ink-soft); margin:0 0 12px;
+  .ctrl{
+    padding:16px 16px 18px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(237,233,223,0.09);
+    border-radius:12px;
   }
+  .ctrl h2{
+    position:relative; padding-left:15px;
+    font-size:15px; font-weight:700; letter-spacing:0;
+    font-family:'Manrope',system-ui,sans-serif;
+    color:#F0ECE2; margin:0 0 14px;
+  }
+  .ctrl h2::before{
+    content:""; position:absolute; left:0; top:3px; width:3px; height:15px;
+    background:var(--accent); border-radius:2px;
+  }
+
 
   .dropzone{
-    display:flex; align-items:center; justify-content:center; text-align:center;
-    border:1px dashed rgba(237,233,223,0.32); border-radius:2px;
-    padding:18px 12px; font-size:12.8px; color:#C9C3B5; cursor:pointer;
-    transition:border-color .15s ease, color .15s ease;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:8px;
+    border:1px dashed rgba(237,233,223,0.32); border-radius:var(--radius);
+    padding:20px 12px; font-size:12.8px; color:#C9C3B5; cursor:pointer;
+    transition:border-color .15s ease, color .15s ease, background-color .15s ease;
   }
+  .dropzone:hover{background:rgba(255,255,255,0.03);}
+  .dropzone__icon{width:20px; height:20px; color:#8F887A; flex-shrink:0; transition:color .15s ease;}
+  .dropzone:hover .dropzone__icon{color:var(--accent-soft);}
   .file-input-hidden{
     position:absolute; width:1px; height:1px; overflow:hidden;
     clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
@@ -70,7 +97,8 @@
   .status-line{font-size:11.5px; color:var(--panel-ink-faint); min-height:14px; margin:8px 0 0;}
   .status-line--error{color:#D9A98C;}
   .dropzone:hover{border-color:var(--accent); color:var(--accent-soft);}
-  .dropzone--small{padding:12px;}
+  .dropzone--small{padding:12px; flex-direction:row; gap:8px;}
+  .dropzone--small .dropzone__icon{width:16px; height:16px;}
 
   label.toggle{
     display:flex; align-items:center; gap:8px;
@@ -85,22 +113,29 @@
   .row input[type=range]{flex:1; margin-left:10px; accent-color:var(--accent);}
   .row input[type=color]{
     width:38px; height:26px; border:1px solid rgba(237,233,223,0.25);
-    border-radius:2px; background:none; padding:0; cursor:pointer;
+    border-radius:6px; background:none; padding:0; cursor:pointer;
   }
 
   .filmstrip{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px;}
   .filmstrip::-webkit-scrollbar{height:5px;}
   .filmstrip::-webkit-scrollbar-thumb{background:rgba(237,233,223,0.2); border-radius:3px;}
   .thumb{
+    position:relative;
     flex:0 0 auto; width:76px; background:none; border:1px solid transparent;
-    border-radius:2px; padding:3px; cursor:pointer;
+    border-radius:10px; padding:3px; cursor:pointer;
     display:flex; flex-direction:column; align-items:center; gap:4px;
-    font-family:inherit;
+    font-family:inherit; transition:border-color .15s ease;
   }
-  .thumb canvas{width:100%; height:52px; display:block; border-radius:1px; object-fit:cover;}
+  .thumb canvas{width:100%; height:52px; display:block; border-radius:7px; object-fit:cover;}
   .thumb__cap{font-size:10px; color:var(--panel-ink-faint); line-height:1.2; text-align:center;}
   .thumb.active{border-color:var(--accent);}
   .thumb.active .thumb__cap{color:var(--accent-soft);}
+  .thumb__remove{
+    position:absolute; top:1px; right:1px; width:16px; height:16px; border-radius:50%;
+    background:rgba(27,25,23,0.8); color:#EDE9DF; font-size:11px; line-height:16px;
+    text-align:center; cursor:pointer;
+  }
+  .thumb__remove:hover{background:var(--accent); color:#1B1917;}
 
   .hidden{display:none;}
   .pexels-block{margin-top:14px; padding-top:14px; border-top:1px solid rgba(237,233,223,0.12);}
@@ -108,12 +143,14 @@
   .pexels-link{display:inline-block; font-size:12px; color:var(--accent-soft); text-decoration:none; margin-bottom:10px;}
   .pexels-link:hover{text-decoration:underline;}
   .pexels-input{
-    width:100%; padding:9px 10px; border-radius:2px; border:1px solid rgba(237,233,223,0.25);
+    width:100%; padding:9px 10px; border-radius:var(--radius); border:1px solid rgba(237,233,223,0.25);
     background:rgba(255,255,255,0.04); color:var(--panel-ink); font-size:12.5px; font-family:inherit; margin-bottom:8px;
+    transition:border-color .15s ease;
   }
+  .pexels-input:hover, .pexels-input:focus{border-color:rgba(176,141,87,0.5);}
   .pexels-input::placeholder{color:var(--panel-ink-faint);}
   .pexels-select{
-    padding:9px 8px; border-radius:2px; border:1px solid rgba(237,233,223,0.25);
+    padding:9px 8px; border-radius:var(--radius); border:1px solid rgba(237,233,223,0.25);
     background:rgba(255,255,255,0.04); color:var(--panel-ink); font-size:12px; font-family:inherit;
   }
   .pexels-searchrow{display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;}
@@ -123,45 +160,70 @@
   .pexels-chip{
     background:rgba(237,233,223,0.06); border:1px solid rgba(237,233,223,0.18); color:#C9C3B5;
     font-size:11px; padding:5px 9px; border-radius:12px; cursor:pointer; font-family:inherit;
+    transition:border-color .15s ease, color .15s ease, background-color .15s ease;
   }
-  .pexels-chip:hover{border-color:var(--accent); color:var(--accent-soft);}
+  .pexels-chip:hover{border-color:var(--accent); color:var(--accent-soft); background:rgba(176,141,87,0.08);}
   .pexels-status{font-size:11.5px; color:var(--panel-ink-faint); min-height:14px; margin:2px 0 8px;}
   .pexels-status--error{color:#D9A98C;}
   .pexels-results{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:6px;}
-  .pexels-item{border:1px solid transparent; border-radius:2px; padding:0; cursor:pointer; background:none; overflow:hidden; aspect-ratio:4/3;}
+  .pexels-item{border:1px solid transparent; border-radius:6px; padding:0; cursor:pointer; background:none; overflow:hidden; aspect-ratio:4/3; transition:border-color .15s ease;}
   .pexels-item img{width:100%; height:100%; object-fit:cover; display:block;}
   .pexels-item:hover{border-color:var(--accent);}
 
   .segmented{
     display:flex; border:1px solid rgba(237,233,223,0.22);
-    border-radius:3px; overflow:hidden; margin-bottom:10px;
+    border-radius:var(--radius); overflow:hidden; margin-bottom:10px;
   }
   .seg{
     flex:1; padding:8px 8px; background:transparent; color:#C9C3B5;
     border:none; font-size:12.3px; cursor:pointer; font-family:inherit;
+    transition:background-color .15s ease, color .15s ease;
   }
   .seg.active{background:var(--accent); color:#1B1917; font-weight:600;}
   .hint{font-size:11.6px; color:var(--panel-ink-faint); line-height:1.45; margin:0 0 12px;}
 
   .btn{
-    width:100%; padding:11px 14px; border-radius:2px; border:1px solid transparent;
+    width:100%; padding:11px 14px; border-radius:var(--radius); border:1px solid transparent;
     font-size:13px; cursor:pointer; font-family:inherit;
+    transition:background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
   }
-  .btn--primary{background:var(--accent); color:#1B1917; font-weight:600;}
-  .btn--primary:hover{background:var(--accent-soft);}
+  .btn--primary{background:var(--accent); color:#1B1917; font-weight:600; box-shadow:0 10px 24px -10px rgba(176,141,87,0.55);}
+  .btn--primary:hover{background:var(--accent-soft); transform:translateY(-1px); box-shadow:0 14px 28px -10px rgba(176,141,87,0.6);}
   .btn--ghost{
     background:transparent; border-color:rgba(237,233,223,0.28); color:var(--panel-ink);
   }
   .btn--ghost:hover{border-color:var(--accent); color:var(--accent-soft);}
 
+  .rail input:disabled, .rail select:disabled, .rail button:disabled{
+    opacity:0.35; cursor:not-allowed;
+  }
+  .rail button:disabled:hover{border-color:rgba(237,233,223,0.28); color:var(--panel-ink); transform:none;}
+
   .rail__foot{margin-top:auto; padding-top:16px; border-top:1px solid rgba(237,233,223,0.14);}
   .foot-note{font-size:10.5px; color:var(--panel-ink-faint); line-height:1.45; margin:10px 0 0;}
+  .foot-copyright{font-size:10px; color:var(--panel-ink-faint); margin:10px 0 0;}
 
   /* --- Stage --- */
-  .stage{flex:1; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:44px;}
+  .stage{
+    position:relative; flex:1; display:flex; align-items:center; justify-content:center; padding:44px;
+    background:
+      radial-gradient(ellipse 60% 45% at 22% 18%, rgba(217,195,154,0.55), transparent 60%),
+      radial-gradient(ellipse 55% 45% at 82% 85%, rgba(176,141,87,0.22), transparent 60%),
+      linear-gradient(160deg, #EDEAE2, #DFDACD);
+  }
+  .stage__inner{
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+    width:min(1100px, 100%);
+  }
+  .stage__intro{
+    margin:0; max-width:660px; text-align:center;
+    font-family:'Manrope',system-ui,sans-serif; font-weight:700;
+    font-size:19px; line-height:1.45; color:#8A6A3D;
+  }
   .canvas-wrap{
-    position:relative; width:min(1100px, 100%);
-    box-shadow:0 34px 70px -26px rgba(27,25,23,0.4);
+    position:relative; width:100%;
+    border-radius:20px; overflow:hidden;
+    box-shadow:0 40px 80px -24px rgba(27,25,23,0.45), 0 1px 0 rgba(255,255,255,0.6) inset;
     background:#fff;
   }
   #mainCanvas{display:block; width:100%; height:auto; touch-action:none; cursor:default;}
@@ -170,8 +232,8 @@
     background:rgba(231,228,221,0.5); backdrop-filter:blur(2px); pointer-events:none;
   }
   .empty-state p{
-    font-family:'Fraunces',Georgia,serif; font-size:15px; color:var(--ink-soft);
-    background:#fff; padding:10px 20px; border:1px solid rgba(27,25,23,0.1); border-radius:2px; margin:0;
+    font-family:'Manrope',system-ui,sans-serif; font-weight:600; font-size:15px; color:var(--ink-soft);
+    background:#fff; padding:10px 20px; border:1px solid rgba(27,25,23,0.1); border-radius:8px; margin:0;
   }
   .empty-state.hidden{display:none;}
 
@@ -187,15 +249,26 @@
 <div class="app">
   <aside class="rail">
     <header class="rail__head">
-      <h1>Atelier Mockup</h1>
-      <p class="rail__sub">Rendez-Vous de Photographes</p>
+      <div class="rail__brand">
+        <svg class="brand-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="3" y="3" width="34" height="34" rx="4" stroke="var(--accent)" stroke-width="2.4"/>
+          <circle cx="14" cy="15" r="3.2" fill="var(--accent-soft)"/>
+          <path d="M7 27 L16 15 L23 24 L27 19 L33 27" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <h1>L'atelier Mockup</h1>
+          <p class="rail__sub">de Tecnipix</p>
+        </div>
+      </div>
     </header>
 
     <section class="ctrl">
-      <h2>Œuvre</h2>
+      <h2>Œuvres</h2>
+      <div class="filmstrip" id="pieceStrip"></div>
       <label class="dropzone" for="artworkInput">
         <input type="file" id="artworkInput" accept="image/*" class="file-input-hidden">
-        <span id="artworkLabel">Choisir une photo, une peinture ou une photo de sculpture…</span>
+        <svg class="dropzone__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 15.5V4M12 4L7.5 8.5M12 4l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 15.5v3a2 2 0 002 2h11a2 2 0 002-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span id="artworkLabel">Ajouter une photo, une peinture ou une photo de sculpture…</span>
       </label>
       <p class="status-line" id="artworkStatus"></p>
     </section>
@@ -204,7 +277,7 @@
       <h2>Passe-partout</h2>
       <label class="toggle"><input type="checkbox" id="matEnabled" checked><span>Activer le passe-partout</span></label>
       <div class="row"><label for="matColor">Couleur</label><input type="color" id="matColor" value="#F5F2EA"></div>
-      <div class="row"><label for="matWidth">Largeur</label><input type="range" id="matWidth" min="0" max="15" value="8"></div>
+      <div class="row"><label for="matWidth">Largeur</label><input type="range" id="matWidth" min="0" max="25" value="8"></div>
     </section>
 
     <section class="ctrl">
@@ -219,6 +292,7 @@
       <div class="filmstrip" id="envStrip"></div>
       <label class="dropzone dropzone--small" for="envInput">
         <input type="file" id="envInput" accept="image/*" class="file-input-hidden">
+        <svg class="dropzone__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 15.5V4M12 4L7.5 8.5M12 4l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 15.5v3a2 2 0 002 2h11a2 2 0 002-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         <span>Téléverser un mur ou une salle…</span>
       </label>
       <p class="status-line" id="envUploadStatus"></p>
@@ -251,20 +325,24 @@
         <button class="seg active" data-mode="simple" type="button">Simple</button>
         <button class="seg" data-mode="perspective" type="button">Perspective libre</button>
       </div>
-      <p class="hint" id="modeHint">Déplacez, redimensionnez (coin) et inclinez légèrement (poignée du haut) le cadre.</p>
-      <button class="btn btn--ghost" id="resetBtn" type="button">Recentrer</button>
+      <p class="hint" id="modeHint">Sélectionnez une œuvre pour la positionner.</p>
+      <button class="btn btn--ghost" id="resetBtn" type="button">Recentrer l'œuvre sélectionnée</button>
     </section>
 
     <div class="rail__foot">
       <button class="btn btn--primary" id="downloadBtn" type="button">Télécharger l'image</button>
       <p class="foot-note">Tout se passe dans votre navigateur — vos images ne sont jamais envoyées sur un serveur.</p>
+      <p class="foot-copyright">© Nicolas Téclès</p>
     </div>
   </aside>
 
   <main class="stage">
-    <div class="canvas-wrap">
-      <canvas id="mainCanvas" width="2200" height="1512"></canvas>
-      <div class="empty-state" id="emptyState"><p>Importez une œuvre pour commencer</p></div>
+    <div class="stage__inner">
+      <p class="stage__intro">Visualisez votre travail dans l'environnement de votre choix, et préparez vos prochaines expositions.</p>
+      <div class="canvas-wrap">
+        <canvas id="mainCanvas" width="2800" height="1925"></canvas>
+        <div class="empty-state" id="emptyState"><p>Ajoutez une œuvre pour commencer</p></div>
+      </div>
     </div>
   </main>
 </div>
@@ -273,22 +351,21 @@
 (function(){
   "use strict";
 
+  const ENV_MAX_DIM = 3600;
+
   const canvas=document.getElementById('mainCanvas');
   const ctx=canvas.getContext('2d');
   const stripEl=document.getElementById('envStrip');
+  const pieceStripEl=document.getElementById('pieceStrip');
   const emptyStateEl=document.getElementById('emptyState');
 
   const state={
-    artworkImg:null,
-    mat:{enabled:true, color:'#F5F2EA', widthRatio:0.08},
-    frame:{enabled:true, color:'#1B1917', widthRatio:0.04},
-    env:{source:null, w:2200, h:1512, key:null},
-    mode:'simple',
-    simpleRect:null,
-    perspCorners:null,
-    framedCanvas:null,
+    pieces:[],
+    selectedId:null,
+    env:{source:null, w:2800, h:1925, key:null},
     drag:null
   };
+  let pieceCounter=0;
 
   /* ---------- helpers ---------- */
   function makeCanvas(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
@@ -305,6 +382,7 @@
     else { sw=img.naturalWidth; sh=sw/tr; sx=0; sy=(img.naturalHeight-sh)/2; }
     ctx2.drawImage(img,sx,sy,sw,sh,0,0,w,h);
   }
+  function getSelectedPiece(){ return state.pieces.find(p=>p.id===state.selectedId) || null; }
 
   /* ---------- procedural environments ---------- */
   function addGrain(ctx2,w,h,amount,alpha){
@@ -421,30 +499,29 @@
     });
   }
   function selectBuiltinEnv(e){
-    if(!envCache[e.key]) envCache[e.key]=e.gen(2200,1512);
-    state.env={source:envCache[e.key], w:2200, h:1512, key:e.key, tainted:false};
+    if(!envCache[e.key]) envCache[e.key]=e.gen(2800,1925);
+    state.env={source:envCache[e.key], w:2800, h:1925, key:e.key, tainted:false};
     updateActiveThumb(e.key);
     setupCanvasSize();
   }
   function updateActiveThumb(key){
-    document.querySelectorAll('.thumb').forEach(b=>b.classList.toggle('active', b.dataset.key===key));
+    document.querySelectorAll('#envStrip .thumb').forEach(b=>b.classList.toggle('active', b.dataset.key===key));
   }
 
-  /* ---------- framed artwork builder ---------- */
-  function buildFramedCanvas(){
-    const img=state.artworkImg;
-    if(!img) return null;
+  /* ---------- framed artwork builder (per piece) ---------- */
+  function buildFramedCanvasFor(piece){
+    const img=piece.artworkImg;
     const iw=img.naturalWidth, ih=img.naturalHeight;
     const shortSide=Math.min(iw,ih);
-    const matPx=state.mat.enabled ? Math.round(state.mat.widthRatio*shortSide) : 0;
+    const matPx=piece.mat.enabled ? Math.round(piece.mat.widthRatio*shortSide) : 0;
     const afterMatW=iw+2*matPx, afterMatH=ih+2*matPx;
-    const framePx=state.frame.enabled ? Math.round(state.frame.widthRatio*Math.min(afterMatW,afterMatH)) : 0;
+    const framePx=piece.frame.enabled ? Math.round(piece.frame.widthRatio*Math.min(afterMatW,afterMatH)) : 0;
     const totalW=afterMatW+2*framePx, totalH=afterMatH+2*framePx;
     const c=makeCanvas(totalW,totalH);
     const ctx2=c.getContext('2d');
 
     if(framePx>0){
-      ctx2.fillStyle=state.frame.color;
+      ctx2.fillStyle=piece.frame.color;
       ctx2.fillRect(0,0,totalW,totalH);
       let lw=Math.max(1,framePx*0.06);
       ctx2.strokeStyle='rgba(255,255,255,0.15)'; ctx2.lineWidth=lw;
@@ -453,7 +530,7 @@
       ctx2.strokeStyle='rgba(0,0,0,0.35)'; ctx2.lineWidth=lw;
       ctx2.strokeRect(framePx-lw/2,framePx-lw/2,totalW-2*framePx+lw,totalH-2*framePx+lw);
     }
-    ctx2.fillStyle=state.mat.enabled ? state.mat.color : '#ffffff';
+    ctx2.fillStyle=piece.mat.enabled ? piece.mat.color : '#ffffff';
     ctx2.fillRect(framePx,framePx,afterMatW,afterMatH);
     if(matPx>0){
       ctx2.strokeStyle='rgba(0,0,0,0.18)';
@@ -464,15 +541,16 @@
     return c;
   }
 
-  function rebuildFramed(isNew){
-    state.framedCanvas=buildFramedCanvas();
-    if(!state.framedCanvas) return;
-    if(isNew || !state.simpleRect){
-      resetPosition();
-    } else {
-      const aspect=state.framedCanvas.height/state.framedCanvas.width;
-      state.simpleRect.h=state.simpleRect.w*aspect;
+  function rebuildSelectedFramed(){
+    const p=getSelectedPiece();
+    if(!p) return;
+    const oldAspect = p.framedCanvas ? p.framedCanvas.height/p.framedCanvas.width : null;
+    p.framedCanvas=buildFramedCanvasFor(p);
+    if(oldAspect){
+      const newAspect=p.framedCanvas.height/p.framedCanvas.width;
+      p.simpleRect.h=p.simpleRect.w*newAspect;
     }
+    refreshPieceThumbImage(p);
     render(true);
   }
 
@@ -493,13 +571,15 @@
     const h=(dist(c[0],c[3])+dist(c[1],c[2]))/2;
     return {cx,cy,w,h,angle:0};
   }
-  function resetPosition(){
-    if(!state.framedCanvas) return;
+  function defaultRectFor(piece, index){
     const W=canvas.width, H=canvas.height;
-    const aspect=state.framedCanvas.height/state.framedCanvas.width;
-    const w=W*0.42, h=w*aspect;
-    state.simpleRect={cx:W/2, cy:H*0.46, w, h, angle:0};
-    state.perspCorners=rectToCorners(state.simpleRect);
+    const aspect=piece.framedCanvas.height/piece.framedCanvas.width;
+    const w=W*0.30, h=w*aspect;
+    const perRow=4;
+    const col=index%perRow, row=Math.floor(index/perRow);
+    const cx=W*0.24 + col*(W*0.17);
+    const cy=H*0.36 + row*(H*0.18);
+    return {cx, cy, w, h, angle:0};
   }
   function pointInRotatedRect(p,r){
     const dx=p.x-r.cx, dy=p.y-r.cy, ang=-r.angle;
@@ -521,7 +601,11 @@
     const rx=-localY*Math.sin(r.angle), ry=localY*Math.cos(r.angle);
     return {x:r.cx+rx, y:r.cy+ry};
   }
-  function handleRadius(){ return Math.max(13, canvas.width*0.014); }
+  function displayScale(){
+    const rect=canvas.getBoundingClientRect();
+    return canvas.width/(rect.width||canvas.width);
+  }
+  function handleRadius(){ return 26*displayScale(); }
 
   /* ---------- perspective warp (triangle affine mapping) ---------- */
   function dilateTriangle(pts, amount){
@@ -569,8 +653,8 @@
   }
 
   /* ---------- render ---------- */
-  function drawSimple(){
-    const r=state.simpleRect;
+  function drawSimple(piece){
+    const r=piece.simpleRect;
     ctx.save();
     ctx.translate(r.cx,r.cy);
     ctx.rotate(r.angle);
@@ -580,11 +664,11 @@
     const off=Math.max(3,r.w*0.012);
     ctx.fillRect(-r.w/2+off, -r.h/2+off*1.5, r.w, r.h);
     ctx.restore();
-    ctx.drawImage(state.framedCanvas, -r.w/2, -r.h/2, r.w, r.h);
+    ctx.drawImage(piece.framedCanvas, -r.w/2, -r.h/2, r.w, r.h);
     ctx.restore();
   }
-  function drawPerspective(grid){
-    const c=state.perspCorners;
+  function drawPerspective(piece, grid){
+    const c=piece.perspCorners;
     const avgEdge=(dist(c[0],c[1])+dist(c[1],c[2])+dist(c[2],c[3])+dist(c[3],c[0]))/4;
     const off=avgEdge*0.015+4;
     ctx.save();
@@ -597,21 +681,21 @@
     ctx.lineTo(c[3].x+off,c[3].y+off*1.5);
     ctx.closePath(); ctx.fill();
     ctx.restore();
-    warpImageToQuad(ctx, state.framedCanvas, c, grid);
+    warpImageToQuad(ctx, piece.framedCanvas, c, grid);
   }
   function drawHandleDot(p,small){
     const r=handleRadius()*(small?0.55:0.6);
     ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2);
     ctx.fillStyle='#FFFFFF'; ctx.fill();
-    ctx.lineWidth=Math.max(1.5,canvas.width*0.0018);
+    ctx.lineWidth=Math.max(1.5, 2*displayScale());
     ctx.strokeStyle='#B08D57'; ctx.stroke();
   }
-  function drawHandles(){
+  function drawHandles(piece){
     ctx.save();
-    ctx.lineWidth=Math.max(1.5,canvas.width*0.0015);
+    ctx.lineWidth=Math.max(1.5, 1.75*displayScale());
     ctx.strokeStyle='rgba(176,141,87,0.9)';
-    if(state.mode==='simple'){
-      const r=state.simpleRect, corners=rectToCorners(r);
+    if(piece.mode==='simple'){
+      const r=piece.simpleRect, corners=rectToCorners(r);
       ctx.beginPath(); ctx.moveTo(corners[0].x,corners[0].y);
       for(let i=1;i<4;i++) ctx.lineTo(corners[i].x,corners[i].y);
       ctx.closePath(); ctx.stroke();
@@ -622,7 +706,7 @@
       ctx.strokeStyle='rgba(176,141,87,0.7)'; ctx.lineWidth=1.5; ctx.stroke();
       drawHandleDot(rh,true);
     } else {
-      const c=state.perspCorners;
+      const c=piece.perspCorners;
       ctx.beginPath(); ctx.moveTo(c[0].x,c[0].y);
       for(let i=1;i<4;i++) ctx.lineTo(c[i].x,c[i].y);
       ctx.closePath(); ctx.stroke();
@@ -634,10 +718,14 @@
     const W=canvas.width, H=canvas.height;
     ctx.clearRect(0,0,W,H);
     if(state.env.source) ctx.drawImage(state.env.source,0,0,W,H);
-    if(state.framedCanvas){
-      if(state.mode==='simple') drawSimple();
-      else drawPerspective(state.drag ? 9 : 20);
-      if(showHandles) drawHandles();
+    const grid = state.drag ? 9 : 20;
+    state.pieces.forEach(p=>{
+      if(!p.framedCanvas) return;
+      if(p.mode==='simple') drawSimple(p); else drawPerspective(p, grid);
+    });
+    if(showHandles){
+      const sel=getSelectedPiece();
+      if(sel) drawHandles(sel);
     }
   }
   let renderScheduled=false;
@@ -648,9 +736,118 @@
   }
 
   function setupCanvasSize(){
-    const {w,h}=fitDims(state.env.w, state.env.h, 2800);
+    const oldW=canvas.width, oldH=canvas.height;
+    const {w,h}=fitDims(state.env.w, state.env.h, ENV_MAX_DIM);
     canvas.width=w; canvas.height=h;
-    if(state.framedCanvas) resetPosition();
+    if(state.pieces.length && oldW && oldH && (oldW!==w || oldH!==h)){
+      const sx=w/oldW, sy=h/oldH;
+      state.pieces.forEach(p=>{
+        p.simpleRect.cx*=sx; p.simpleRect.cy*=sy; p.simpleRect.w*=sx; p.simpleRect.h*=sy;
+        p.perspCorners=p.perspCorners.map(pt=>({x:pt.x*sx, y:pt.y*sy}));
+      });
+    }
+    render(true);
+  }
+
+  /* ---------- piece thumbstrip ---------- */
+  function refreshPieceStrip(){
+    pieceStripEl.innerHTML='';
+    state.pieces.forEach(p=>{
+      const btn=document.createElement('button');
+      btn.className='thumb'; btn.type='button'; btn.dataset.pieceId=p.id;
+      const tc=makeCanvas(160,110);
+      drawCover(tc.getContext('2d'), p.framedCanvas, 160, 110);
+      btn.appendChild(tc);
+      const remove=document.createElement('span');
+      remove.className='thumb__remove'; remove.textContent='×';
+      remove.addEventListener('click', ev=>{ ev.stopPropagation(); removePiece(p.id); });
+      btn.appendChild(remove);
+      btn.addEventListener('click', ()=>{ selectPiece(p.id); render(true); });
+      pieceStripEl.appendChild(btn);
+    });
+    updatePieceThumbActive(state.selectedId);
+  }
+  function updatePieceThumbActive(id){
+    pieceStripEl.querySelectorAll('.thumb').forEach(b=>b.classList.toggle('active', b.dataset.pieceId===id));
+  }
+  function refreshPieceThumbImage(piece){
+    const btn=pieceStripEl.querySelector('[data-piece-id="'+piece.id+'"]');
+    if(!btn) return;
+    const tc=btn.querySelector('canvas');
+    if(tc) drawCover(tc.getContext('2d'), piece.framedCanvas, 160, 110);
+  }
+  function updateArtworkLabel(){
+    const el=document.getElementById('artworkLabel');
+    const n=state.pieces.length;
+    el.textContent = n===0
+      ? 'Ajouter une photo, une peinture ou une photo de sculpture…'
+      : (n===1 ? '1 œuvre ajoutée — en ajouter une autre…' : n+' œuvres ajoutées — en ajouter une autre…');
+  }
+
+  /* ---------- piece controls sync ---------- */
+  const CTRL_IDS=['matEnabled','matColor','matWidth','frameEnabled','frameColor','frameWidth','resetBtn'];
+  function syncControlsToSelectedPiece(){
+    const p=getSelectedPiece();
+    const disabled=!p;
+    CTRL_IDS.forEach(id=>{ document.getElementById(id).disabled=disabled; });
+    document.querySelectorAll('.seg').forEach(b=>b.disabled=disabled);
+    if(!p){
+      document.getElementById('modeHint').textContent='Sélectionnez une œuvre pour la positionner.';
+      return;
+    }
+    document.getElementById('matEnabled').checked=p.mat.enabled;
+    document.getElementById('matColor').value=p.mat.color;
+    document.getElementById('matWidth').value=Math.round(p.mat.widthRatio*100);
+    document.getElementById('frameEnabled').checked=p.frame.enabled;
+    document.getElementById('frameColor').value=p.frame.color;
+    document.getElementById('frameWidth').value=Math.round(p.frame.widthRatio*100);
+    document.querySelectorAll('.seg').forEach(b=>b.classList.toggle('active', b.dataset.mode===p.mode));
+    document.getElementById('modeHint').textContent = p.mode==='simple'
+      ? "Déplacez, redimensionnez (coin) et inclinez légèrement (poignée du haut) le cadre."
+      : "Glissez chacun des 4 coins pour épouser la perspective du mur.";
+  }
+  function selectPiece(id){
+    state.selectedId=id;
+    updatePieceThumbActive(id);
+    syncControlsToSelectedPiece();
+  }
+
+  /* ---------- create / remove pieces ---------- */
+  function createPiece(source, name){
+    const piece={
+      id:'p'+(++pieceCounter),
+      artworkImg:source,
+      name:name,
+      mat:{enabled:true, color:'#F5F2EA', widthRatio:0.08},
+      frame:{enabled:true, color:'#1B1917', widthRatio:0.04},
+      framedCanvas:null,
+      mode:'simple',
+      simpleRect:null,
+      perspCorners:null
+    };
+    piece.framedCanvas=buildFramedCanvasFor(piece);
+    const idx=state.pieces.length;
+    piece.simpleRect=defaultRectFor(piece, idx);
+    piece.perspCorners=rectToCorners(piece.simpleRect);
+    state.pieces.push(piece);
+    state.selectedId=piece.id;
+    emptyStateEl.classList.add('hidden');
+    refreshPieceStrip();
+    syncControlsToSelectedPiece();
+    updateArtworkLabel();
+    render(true);
+  }
+  function removePiece(id){
+    const idx=state.pieces.findIndex(p=>p.id===id);
+    if(idx===-1) return;
+    state.pieces.splice(idx,1);
+    if(state.selectedId===id){
+      state.selectedId = state.pieces.length ? state.pieces[Math.max(0, idx-1)].id : null;
+    }
+    refreshPieceStrip();
+    syncControlsToSelectedPiece();
+    updateArtworkLabel();
+    if(!state.pieces.length) emptyStateEl.classList.remove('hidden');
     render(true);
   }
 
@@ -660,46 +857,57 @@
     const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
     return {x:(e.clientX-rect.left)*sx, y:(e.clientY-rect.top)*sy};
   }
-  function onPointerDown(e){
-    if(!state.framedCanvas) return;
-    const p=toCanvasCoords(e), R=handleRadius();
-    if(state.mode==='simple'){
-      const r=state.simpleRect;
+  function hitTestPieceHandles(piece, p, R){
+    if(piece.mode==='simple'){
+      const r=piece.simpleRect;
       const rh=rotateHandlePos(r);
-      if(dist(p,rh)<R){
-        state.drag={type:'rotate', center:{x:r.cx,y:r.cy}, startAngle:r.angle, startPointerAngle:Math.atan2(p.y-r.cy,p.x-r.cx)};
-        canvas.setPointerCapture(e.pointerId); return;
-      }
+      if(dist(p,rh)<R) return {type:'rotate', center:{x:r.cx,y:r.cy}, startAngle:r.angle, startPointerAngle:Math.atan2(p.y-r.cy,p.x-r.cx)};
       const corners=rectToCorners(r);
       for(let i=0;i<4;i++){
-        if(dist(p,corners[i])<R){
-          state.drag={type:'resize', startW:r.w, startH:r.h, startDist:Math.hypot(r.w/2,r.h/2)};
-          canvas.setPointerCapture(e.pointerId); return;
-        }
-      }
-      if(pointInRotatedRect(p,r)){
-        state.drag={type:'move', dx:p.x-r.cx, dy:p.y-r.cy};
-        canvas.setPointerCapture(e.pointerId); return;
+        if(dist(p,corners[i])<R) return {type:'resize', startW:r.w, startH:r.h, startDist:Math.hypot(r.w/2,r.h/2)};
       }
     } else {
-      const c=state.perspCorners;
+      const c=piece.perspCorners;
       for(let i=0;i<4;i++){
-        if(dist(p,c[i])<R){
-          state.drag={type:'corner', index:i};
-          canvas.setPointerCapture(e.pointerId); return;
-        }
+        if(dist(p,c[i])<R) return {type:'corner', index:i};
       }
-      if(pointInPolygon(p,c)){
-        state.drag={type:'moveAll', last:p};
-        canvas.setPointerCapture(e.pointerId); return;
+    }
+    return null;
+  }
+  function hitTestPieceBody(piece, p){
+    if(piece.mode==='simple') return pointInRotatedRect(p, piece.simpleRect);
+    return pointInPolygon(p, piece.perspCorners);
+  }
+  function onPointerDown(e){
+    if(!state.pieces.length) return;
+    const p=toCanvasCoords(e), R=handleRadius();
+    const sel=getSelectedPiece();
+    if(sel){
+      const h=hitTestPieceHandles(sel, p, R);
+      if(h){ state.drag=Object.assign({pieceId:sel.id}, h); canvas.setPointerCapture(e.pointerId); return; }
+    }
+    for(let i=state.pieces.length-1;i>=0;i--){
+      const piece=state.pieces[i];
+      if(hitTestPieceBody(piece, p)){
+        selectPiece(piece.id);
+        if(piece.mode==='simple'){
+          state.drag={pieceId:piece.id, type:'move', dx:p.x-piece.simpleRect.cx, dy:p.y-piece.simpleRect.cy};
+        } else {
+          state.drag={pieceId:piece.id, type:'moveAll', last:p};
+        }
+        canvas.setPointerCapture(e.pointerId);
+        render(true);
+        return;
       }
     }
   }
   function onPointerMove(e){
     if(!state.drag) return;
+    const piece=state.pieces.find(x=>x.id===state.drag.pieceId);
+    if(!piece){ state.drag=null; return; }
     const p=toCanvasCoords(e);
-    if(state.mode==='simple'){
-      const r=state.simpleRect;
+    if(piece.mode==='simple'){
+      const r=piece.simpleRect;
       if(state.drag.type==='move'){ r.cx=p.x-state.drag.dx; r.cy=p.y-state.drag.dy; }
       else if(state.drag.type==='resize'){
         const ang=-r.angle, dx=p.x-r.cx, dy=p.y-r.cy;
@@ -711,10 +919,10 @@
         r.angle=state.drag.startAngle+(ang-state.drag.startPointerAngle);
       }
     } else {
-      if(state.drag.type==='corner'){ state.perspCorners[state.drag.index]={x:p.x,y:p.y}; }
+      if(state.drag.type==='corner'){ piece.perspCorners[state.drag.index]={x:p.x,y:p.y}; }
       else if(state.drag.type==='moveAll'){
         const dx=p.x-state.drag.last.x, dy=p.y-state.drag.last.y;
-        state.perspCorners.forEach(c=>{ c.x+=dx; c.y+=dy; });
+        piece.perspCorners.forEach(c=>{ c.x+=dx; c.y+=dy; });
         state.drag.last=p;
       }
     }
@@ -727,14 +935,13 @@
   canvas.addEventListener('pointerup', onPointerUp);
   canvas.addEventListener('pointercancel', onPointerUp);
 
-  /* ---------- controls wiring ---------- */
+  /* ---------- image loading ---------- */
   function setStatus(elId, text, isError){
     const el=document.getElementById(elId);
     if(!el) return;
     el.textContent=text||'';
     el.className='status-line'+(isError?' status-line--error':'');
   }
-
   function bitmapToCanvas(bitmap){
     const c=makeCanvas(bitmap.width, bitmap.height);
     c.getContext('2d').drawImage(bitmap, 0, 0);
@@ -742,7 +949,6 @@
     if(bitmap.close) bitmap.close();
     return c;
   }
-
   function loadViaFileReader(file, finish, fail){
     const reader=new FileReader();
     reader.onerror=()=>fail(reader.error);
@@ -754,7 +960,6 @@
     };
     reader.readAsDataURL(file);
   }
-
   function loadImageFile(file, statusElId){
     return new Promise((resolve, reject)=>{
       setStatus(statusElId, 'Chargement…');
@@ -780,11 +985,9 @@
   document.getElementById('artworkInput').addEventListener('change', ev=>{
     const file=ev.target.files[0]; if(!file) return;
     loadImageFile(file, 'artworkStatus').then(source=>{
-      state.artworkImg=source;
-      document.getElementById('artworkLabel').textContent=file.name;
-      emptyStateEl.classList.add('hidden');
-      rebuildFramed(true);
+      createPiece(source, file.name);
     }).catch(()=>{});
+    ev.target.value='';
   });
 
   function addImageEnvThumb(img, key, label, tainted){
@@ -886,23 +1089,23 @@
     });
   });
 
-  document.getElementById('matEnabled').addEventListener('change', e=>{ state.mat.enabled=e.target.checked; rebuildFramed(false); });
-  document.getElementById('matColor').addEventListener('input', e=>{ state.mat.color=e.target.value; rebuildFramed(false); });
-  document.getElementById('matWidth').addEventListener('input', e=>{ state.mat.widthRatio=e.target.value/100; rebuildFramed(false); });
-  document.getElementById('frameEnabled').addEventListener('change', e=>{ state.frame.enabled=e.target.checked; rebuildFramed(false); });
-  document.getElementById('frameColor').addEventListener('input', e=>{ state.frame.color=e.target.value; rebuildFramed(false); });
-  document.getElementById('frameWidth').addEventListener('input', e=>{ state.frame.widthRatio=e.target.value/100; rebuildFramed(false); });
+  /* ---------- mat / frame controls (act on the selected piece) ---------- */
+  document.getElementById('matEnabled').addEventListener('change', e=>{ const p=getSelectedPiece(); if(!p)return; p.mat.enabled=e.target.checked; rebuildSelectedFramed(); });
+  document.getElementById('matColor').addEventListener('input', e=>{ const p=getSelectedPiece(); if(!p)return; p.mat.color=e.target.value; rebuildSelectedFramed(); });
+  document.getElementById('matWidth').addEventListener('input', e=>{ const p=getSelectedPiece(); if(!p)return; p.mat.widthRatio=e.target.value/100; rebuildSelectedFramed(); });
+  document.getElementById('frameEnabled').addEventListener('change', e=>{ const p=getSelectedPiece(); if(!p)return; p.frame.enabled=e.target.checked; rebuildSelectedFramed(); });
+  document.getElementById('frameColor').addEventListener('input', e=>{ const p=getSelectedPiece(); if(!p)return; p.frame.color=e.target.value; rebuildSelectedFramed(); });
+  document.getElementById('frameWidth').addEventListener('input', e=>{ const p=getSelectedPiece(); if(!p)return; p.frame.widthRatio=e.target.value/100; rebuildSelectedFramed(); });
 
   document.querySelectorAll('.seg').forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      const p=getSelectedPiece();
+      if(!p) return;
       const m=btn.dataset.mode;
-      if(m===state.mode || !state.framedCanvas){
-        if(!state.framedCanvas) return;
-      }
-      if(m!==state.mode){
-        if(m==='perspective'){ state.perspCorners=rectToCorners(state.simpleRect); }
-        else { state.simpleRect=cornersToApproxRect(state.perspCorners); }
-        state.mode=m;
+      if(m!==p.mode){
+        if(m==='perspective'){ p.perspCorners=rectToCorners(p.simpleRect); }
+        else { p.simpleRect=cornersToApproxRect(p.perspCorners); }
+        p.mode=m;
       }
       document.querySelectorAll('.seg').forEach(b=>b.classList.toggle('active', b===btn));
       document.getElementById('modeHint').textContent = m==='simple'
@@ -912,10 +1115,16 @@
     });
   });
 
-  document.getElementById('resetBtn').addEventListener('click', ()=>{ resetPosition(); render(true); });
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    const p=getSelectedPiece(); if(!p) return;
+    const idx=state.pieces.indexOf(p);
+    p.simpleRect=defaultRectFor(p, idx);
+    p.perspCorners=rectToCorners(p.simpleRect);
+    render(true);
+  });
 
   document.getElementById('downloadBtn').addEventListener('click', ()=>{
-    if(!state.framedCanvas){ return; }
+    if(!state.pieces.length){ return; }
     if(state.env.tainted){
       setPexelsStatus("Impossible de télécharger avec ce fond (source qui bloque l'export) — choisis un autre fond en ligne, ou téléverse ta propre photo du lieu.", true);
       return;
@@ -934,6 +1143,7 @@
   /* ---------- init ---------- */
   buildEnvStrip();
   selectBuiltinEnv(BUILTIN_ENVS[0]);
+  syncControlsToSelectedPiece();
 })();
 
 if('serviceWorker' in navigator){

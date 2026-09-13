@@ -1,6 +1,6 @@
 {
-  "name": "Atelier Mockup pour Rendez-Vous de Photographes",
-  "short_name": "Atelier Mockup",
+  "name": "L'atelier Mockup pour Tecnipix",
+  "short_name": "L'atelier Mockup",
   "description": "Mise en situation d'une oeuvre (photo, peinture, sculpture) dans un environnement d'exposition, avec passe-partout, cadre et perspective.",
   "start_url": "./index.html",
   "scope": "./",

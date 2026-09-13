@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atelier-mockup-v6';
+const CACHE_NAME = 'atelier-mockup-v14';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
